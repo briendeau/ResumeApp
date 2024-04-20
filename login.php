@@ -7,11 +7,10 @@
     unset($_SESSION['error']);
 }
 
-// umsi@umich.edu
-// php123
+
 
   $salt = 'XyZzy12*_';
-  $stored_hash = '1a52e17fa899cf40fb04cfc42e6352f1';  // Pw is meow123 [php123]
+ // Pw is meow123 [php123]
 
   $failure = false; // if we have no POST data
 
@@ -59,15 +58,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matrix Analysis</title>
+  <script>
+    function doValidate() {
+      console.log("Validating...");
+      try {
+        pw = document.getElementById('id_1723').value;
+        name = document.getElementById('name').value;
+        console.log("Validating pw="+pw);
+        console.log("Validating name="+pw);
+        if (pw == null || pw == "" || name == null || name == "")  {
+          alert("Both fields must be filled out."); 
+          return false;
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
+      return false;
+    }
+  </script>
 </head>
 <body>
 <h1>Please Log In</h1>
   <form method="POST" action="login.php">
     <label for="name">User Name</label>
     <input type="text" name="email" id="name"><br/>
-    <label label for="id_1723">Password</label>
-    <input type="text" name="pass"><br/>
-    <input type="submit" value="Log In">
+    <label label for="pass">Password</label>
+    <input type="password" name="pass" id="id_1723"><br/>
+    <input type="submit" value="Log In" onclick="return doValidate();">
     <!-- <input type="submit" name="cancel" value="Cancel"> -->
 </form>
 <a href="index.php">Cancel</a></p>

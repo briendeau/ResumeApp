@@ -1,34 +1,47 @@
 <?php
 require_once "pdo.php";
 session_start();
+
+if ( ! isset($_GET['profile_id']) ) {
+  $_SESSION['error'] = "Missing profile_id";
+  header('Location: index.php');
+  return;
+}
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Matrix Analysis View Page</title>
+<title>Brian Riendeau Analysis View Page</title>
 <!-- bootstrap.php - this is HTML -->
 
 </head>
-<body>
+<body>  
 <?php
 
-$stmt = $pdo->query("SELECT profile_id, user_id, first_name, last_name, email, headline, summary FROM profile");
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$stmt = $pdo->prepare("SELECT profile_id, first_name, last_name, email, headline, summary FROM profile WHERE profile_id = :xyz");
+$stmt->execute(array(":xyz" => $_GET['profile_id']));
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+if ( $row === false ) {
+  $_SESSION['error'] = 'Bad value for profile_id';
+  header( 'Location: index.php' ) ;
+  return;
+}
 ?>
 <div class="container">
 <h1>Profile information</h1>
 <p>First Name:
-<?= $row['first_name'] ?></p>
+<?= htmlentities($row['first_name']) ?></p>
 <p>Last Name:
-<?= $row['last_name'] ?></p></p>
+<?= htmlentities($row['last_name']) ?></p></p>
 <p>Email:
-<?= $row['email'] ?></p></p>
+<?= htmlentities($row['email']) ?></p></p>
 <p>Headline:<br/>
-<?= $row['headline'] ?></p></p>
+<?= htmlentities($row['headline']) ?></p></p>
 <p>Summary:<br/>
-<?= $row['summary'] ?></p><p>
+<?= htmlentities($row['summary']) ?></p><p>
 </p>
 <a href="index.php">Done</a>
 </div>

@@ -3,7 +3,7 @@ require_once "pdo.php";
 
 session_start();
 
-if  (!isset($_SESSION['name']) ) {
+if  (!isset($_SESSION['name']) && !isset($_SESSION['user_id']) ) {
   die("ACCESS DENIED");
 }
 
@@ -12,8 +12,11 @@ if  (!isset($_SESSION['name']) ) {
     unset($_SESSION['error']);
 }
 
+
+
 if (isset($_POST['add'])) {
-  if (strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || strlen($_POST['email']) < 1 || strlen($_POST['headline']) < 1
+  if (strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 ||
+      strlen($_POST['email']) < 1 || strlen($_POST['headline']) < 1
   || strlen($_POST['summary']) < 1) {
     $_SESSION['error'] = "All fields are required.";
     header("Location: ./add.php");
@@ -23,8 +26,7 @@ if (isset($_POST['add'])) {
     header("Location: ./add.php");
     return;
   } else  {
-    // echo "<h1>Test</h1>";
-    // print_r($_POST);
+ 
 
     $stmt = $pdo->prepare('INSERT INTO Profile
     (user_id, first_name, last_name, email, headline, summary)

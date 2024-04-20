@@ -14,6 +14,11 @@ if ( ! isset($_GET['profile_id']) ) {
   return;
 }
 
+// uncomment this to delete other users when logged in
+if ($_SESSION['user_id'] !== $_GET['profile_id']) {
+  die("Permission not granted for this user.");
+}
+
 
 if ( isset($_POST['delete']) && isset($_POST['profile_id']) ) {
     $sql = "DELETE FROM profile WHERE profile_id = :zip";

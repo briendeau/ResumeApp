@@ -7,15 +7,24 @@ if  (!isset($_SESSION['name']) ) {
   die("ACCESS DENIED");
 }
 
+if (!isset($_SESSION['user_id'])) {
+  die("Invalid User_ID");
+}
 
+if (!isset($_GET['profile_id']) || $_SESSION['user_id'] !== $_GET['profile_id']) {
+  die("Permission not granted for this user.");
+}
+if ($_SESSION['user_id'] !== $_GET['profile_id']) {
+  die("Permission not granted for this user.");
+}
 
 // skip this code when first coming to the page on a GET request.
-if ( isset($_POST['make']) && isset($_POST['model'])
-  && isset($_POST['year']) && isset($_POST['mileage']) && isset($_POST['profile_id']) ) {
+if ( isset($_POST['first_name']) && isset($_POST['last_name'])
+  && isset($_POST['email']) && isset($_POST['headline']) && isset($_POST['summary']) && isset($_POST['profile_id']) ) {
 
   // Data validation
-  if ( strlen($_POST['make']) < 1 || strlen($_POST['model']) < 1 || 
-       strlen($_POST['year']) < 1 || strlen($_POST['mileage']) < 1) {
+  if ( strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || 
+       strlen($_POST['email']) < 1 || strlen($_POST['headline']) < 1 || strlen($_POST['summary']) < 1) {
     $_SESSION['error'] = 'All fields are required';
     header("Location: edit.php?profile_id=".$_POST['profile_id']);
     return;
@@ -24,15 +33,17 @@ if ( isset($_POST['make']) && isset($_POST['model'])
         header("Location: edit.php?profile_id=".$_POST['profile_id']);
         return;
     } else {
+ 
                     // make sure your commas are not missing or at the end of vars or this will BLOW UP
-    $sql = "UPDATE autos SET make = :make, model = :model, year = :year, mileage = :mileage WHERE autos_id = :autos_id";
+    $sql = "UPDATE profile SET  first_name = :fn, last_name = :ln, email = :em, headline = :hdl, summary = :sum WHERE profile_id = :pid";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array(
-        ':make' => $_POST['make'],
-        ':model' => $_POST['model'],
-        ':year' => $_POST['year'],
-        ':mileage' => $_POST['mileage'],
-        ':autos_id' => $_POST['autos_id']));
+        ':fn' => $_POST['first_name'],
+        ':ln' => $_POST['last_name'],
+        ':em' => $_POST['email'],
+        ':hdl' => $_POST['headline'],
+        ':sum' => $_POST['summary'],
+        ':pid' => $_POST['profile_id']));
     $_SESSION['success'] = 'Record updated';
     header( 'Location: index.php' ) ;
     return;
@@ -56,7 +67,8 @@ if ( isset($_SESSION['error']) ) {
   unset($_SESSION['error']);
 }
 
-$stmt = $pdo->prepare("SELECT profile_id, user_id, first_name, last_name, email, headline, summary FROM profile WHERE profile_id = :xyz");
+
+$stmt = $pdo->prepare("SELECT profile_id, first_name, last_name, email, headline, summary FROM profile WHERE profile_id = :xyz");
 
 $stmt->execute(array(":xyz" => $_GET['profile_id']));
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -86,7 +98,7 @@ $profile_id = $row['profile_id'];
     <p>Edit Resume Profile</p>
     <form method="post">
     <p>First Name:
-    <input type="text" name="first_name" value="<?= $fn ?>"></p>
+    <input type="text" name="first_name" value="<?= $fn  ?>"></p>
     <p>Last Name:
     <input type="text" name="last_name" value="<?= $ln ?>"></p>
     <p>Email:
